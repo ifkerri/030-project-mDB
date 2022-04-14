@@ -24,32 +24,24 @@ const movieDB = {
     ]
 };
 
-const advertBlock = document.querySelector('.promo__adv'),
-      advertContent = advertBlock.querySelectorAll('img');
-      
-document.querySelector('.promo__adv-title').remove();
-advertContent.forEach((item, i) => {
+const advertBlock = document.querySelectorAll('.promo__adv img'),
+      promoInteractiveList = document.querySelector('.promo__interactive-list');
+
+advertBlock.forEach(item => {
     item.remove();        
 });
 
-document.querySelector('.promo__genre').textContent = 'ДРАМА';
-document.querySelector('.promo__bg').style.background = 'url(\'../img/bg.jpg\')';
+document.querySelector('.promo__genre').textContent = 'драма';
+document.querySelector('.promo__bg').style.backgroundImage = 'url(\'../img/bg.jpg\')';
 
-movieDB.movies.sort();
-const promoInteractiveList = document.querySelector('.promo__interactive-list');
 promoInteractiveList.querySelectorAll('li').forEach(item => item.remove());
-for (let index = 0; index < movieDB.movies.length; index++) {
-    
-    const promoInteractiveListItem = document.createElement('li');
-    const promoInteractiveListItemDelete = document.createElement('div');
-
-    promoInteractiveListItem.setAttribute('class', 'promo__interactive-item');
-    promoInteractiveListItem.innerText = '' + (index + 1) + '. ' + movieDB.movies[index];
-    
-    promoInteractiveListItemDelete.setAttribute('class', 'delete');
-    
-    promoInteractiveListItem.append(promoInteractiveListItemDelete);
-    promoInteractiveList.append(promoInteractiveListItem);
-
-}
+movieDB.movies.sort();
+movieDB.movies.forEach((film, i) => {
+    const text = '' + (i + 1) + '. ' + film;
+    promoInteractiveList.innerHTML += `
+        <li class="promo__interactive-item">${text}
+            <div class="delete"></div>
+        </li>
+    `;    
+});
 
