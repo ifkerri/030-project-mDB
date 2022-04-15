@@ -17,71 +17,84 @@ P.S. Здесь есть несколько вариантов решения з
 
 //'use strict';
 
-const movieDB = {
-    movies: [
-        'Логан',
-        'Лига справедливости',
-        'Ла-ла лэнд',
-        'Одержимость',
-        'Скотт Пилигрим против...'
-    ],
-    refreshFilmList: function () {
+document.addEventListener('DOMContentLoaded', e => {
 
-        const promoInteractiveList = document.querySelector('.promo__interactive-list');
-        promoInteractiveList.querySelectorAll('li').forEach(item => item.remove());
-        movieDB.movies.sort();
-        movieDB.movies.forEach((film, i) => {
+    const movieDB = {
+        movies: [
+            'Логан',
+            'Лига справедливости',
+            'Ла-ла лэнд',
+            'Одержимость',
+            'Скотт Пилигрим против...'
+        ],
+
+
+    };
+
+    const advertBlock = document.querySelectorAll('.promo__adv img'),
+        filmList = document.querySelector('.promo__interactive-list'),
+        inputFilm = document.querySelector('.promo__interactive .add input[type="text"]'),
+        btnAddFilm = document.querySelector('.promo__interactive .add button'),
+        isFavorite = document.querySelector('.promo__interactive .add .yes').previousElementSibling;
+
+    const refreshFilmList = (parent, films) => {
+
+        parent.querySelectorAll('li').forEach(item => item.remove());
+        arrSort(films);
+        films.forEach((film, i) => {
             const text = '' + (i + 1) + '. ' + film;
-            promoInteractiveList.innerHTML += `
-                <li class="promo__interactive-item">${text}
-                    <div class="delete"></div>
-                </li>
-                `;
+            parent.innerHTML += `
+                    <li class="promo__interactive-item">${text}
+                        <div class="delete"></div>
+                    </li>
+                    `;
         });
 
-        promoInteractiveList.childNodes.forEach(node => {
-            if (node.nodeName != '#text') {
-                node.firstElementChild.addEventListener('click', e => {
-                    e.preventDefault();
-                    const filmValue = e.currentTarget.parentElement.textContent,
-                          index = parseInt(filmValue.substr(0, filmValue.indexOf('.')));
-                    movieDB.movies.splice(movieDB.movies.indexOf(movieDB.movies[index - 1]), 1);
-                    movieDB.refreshFilmList();
-                });
-            }
+        document.querySelectorAll('.delete').forEach((el, i) => {
+            el.addEventListener('click', (event) => {
+                event.preventDefault();
+                el.parentElement.remove();
+                films.splice(i, 1);
+                refreshFilmList(parent, films);
+            });
         });
 
-    }
+    };
 
-};
+    const arrSort = (arr) => {
+        arr.sort();
+    };
 
-const advertBlock = document.querySelectorAll('.promo__adv img'),
-      inputFilm = document.querySelector('.promo__interactive .add input[type="text"]'),
-      btnAddFilm = document.querySelector('.promo__interactive .add button'),
-      isFavorite = document.querySelector('.promo__interactive .add .yes').previousElementSibling;
+    const deleteAdv = (arr) => {
+        arr.forEach(item => {
+            item.remove();
+        });
+    };
 
-movieDB.refreshFilmList();
+    const makeChanges = () => {
+        document.querySelector('.promo__genre').textContent = 'драма';
+        document.querySelector('.promo__bg').style.backgroundImage = 'url(\'img/bg.jpg\')';
+    };
 
-advertBlock.forEach(item => {
-    item.remove();
-});
+    refreshFilmList(filmList, movieDB.movies);
+    deleteAdv(advertBlock);
+    makeChanges();
 
-document.querySelector('.promo__genre').textContent = 'драма';
-document.querySelector('.promo__bg').style.backgroundImage = 'url(\'../img/bg.jpg\')';
+    btnAddFilm.addEventListener('click', event => {
 
-btnAddFilm.addEventListener('click', e => {
-    
-    e.preventDefault();
-    
-    if (isFavorite.checked) {
-        console.log('Добавляем любимый фильм');
-    }
+        event.preventDefault();
 
-    const filmValue = inputFilm.value.trim();
-    if (filmValue != '' && movieDB.movies.indexOf(filmValue) == -1) {
-        movieDB.movies.push(filmValue.length > 21 ? filmValue.substr(0, 21) + '...' : filmValue);
-        movieDB.refreshFilmList();
-        inputFilm.value = '';
-    }
+        if (isFavorite.checked) {
+            console.log('Добавляем любимый фильм');
+        }
+
+        const filmValue = inputFilm.value.trim();
+        if (filmValue != '' && movieDB.movies.indexOf(filmValue) == -1) {
+            movieDB.movies.push(filmValue.length > 21 ? filmValue.substr(0, 21) + '...' : filmValue);
+            refreshFilmList(filmList, movieDB.movies);
+            inputFilm.value = '';
+        }
+
+    });
 
 });
